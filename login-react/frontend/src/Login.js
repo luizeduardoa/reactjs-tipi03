@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ValidacaodeLogin from './ValidacaodeLogin';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const Login = () => {
     const [valores, setValores] = useState({
@@ -8,15 +11,31 @@ const Login = () => {
         password: ""
     });
 
+    const navegacao = useNavigate();
+
     const [errors, setErrors] = useState({});
 
     const handleInput = (event) => {
         setValores(prev => ({...prev, [event.target.name]: event.target.value}))
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setErrors(ValidacaodeLogin(valores));
+
+        if(errors.email === "" && errors.password === ""){
+            axios.post('http://localhost:7006/login', valores)
+            .then(res => {
+                if(res.data === "Login realizado com sucesso"){
+                    console.log(res);
+                    navegacao("/");
+                } else {
+                    alert("Registro inexistente");
+                    console.log(res);
+                }
+            })
+            .catch(err => console.log(err));
+        }
     }
 
   return (
