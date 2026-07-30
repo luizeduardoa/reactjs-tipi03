@@ -5,7 +5,7 @@ require("dotenv").config();
 mongoose.set("strictQuery", true);
 
 async function main() {
-await mongoose.connect(`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASS}@cluster0.ww1r6np.mongodb.net/?appName=Cluster0`);
+await mongoose.connect(`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASS}@cluster0.9ivf8kj.mongodb.net/?appName=Cluster0`);
 
     console.log("Conectado ao banco de dados!");
 }
