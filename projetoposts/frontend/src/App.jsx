@@ -1,11 +1,21 @@
 import './App.css';
-
+ 
+import { Outlet } from 'react-router-dom';
+ 
+//componentes
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+ 
 function App(){
   return(
     <div className="App">
-      <h1>Memórias</h1>
+      <Navbar />
+      <div className="container">
+        <Outlet />
+      </div>
+      <Footer />
     </div>
   )
 }
-
+ 
 export default App;
