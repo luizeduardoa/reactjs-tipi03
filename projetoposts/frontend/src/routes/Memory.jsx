@@ -4,12 +4,17 @@ import { useState, useEffect, memo } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import "./Memory.css";
+
 const Memory = () => {
 
     const { id } = useParams();
 
     const [memory, setMemory] = useState(null);
     const [comments, setComments] = useState([]);
+
+    const [name, setName] = useState("");
+    const [text, setText] = useState("");
 
     useEffect(()=>{
         const getMemory = async() =>{
@@ -22,6 +27,29 @@ const Memory = () => {
             getMemory();
     });
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try{
+
+            const comment = {name, text};
+
+            const res = await axios.patch(`/memorias/${memory._id}/comentario/`, comment);
+
+            const lastComment = res.data.memory.comments.pop();
+
+            setComments((comments) => [...comments, lastComment]);
+
+            setName("");
+            setText("");
+            toast.success(res.data.msg);
+        } catch(error){
+            console.log(error);
+            toast.error(error.response?.data?.msg || "Erro ao enviar comentário");
+        }
+
+    }
+
     if(!memory) return <p>Carregando...</p>;
 
   return (
@@ -31,16 +59,27 @@ const Memory = () => {
         <p>{memory.description}</p>
         <div className="coment-form">
             <h3>Envie o seu comentário</h3>
-            <form>
+            <form onSubmit={handleSubmit}>
+                 <label>
+                    <input type="text" placeholder="Seu nome" onChange={(e) => setName(e.target.value)} value={name} />
+                </label>
                 <label>
-                    <textarea placeholder="Seu comentário"></textarea>
+                    <textarea placeholder="Seu comentário" onChange={(e) => setText(e.target.value)} value={text}></textarea>
                 </label>
                 <input type="submit" value="Enviar" className="btn" />
             </form>
         </div>
-        <div className="comments container">
+        <div className="comment-container">
             <h3>Comentários ({comments.length})</h3>
             {comments.length === 0 && <p>Não há comentários</p>}
+            {comments.length > 0 &&
+            comments.map((comment) =>
+                <div className="comment" key={comment._id}>
+                    <p className="comment-name">{comment.name}</p>
+                    <p className="comment-text">{comment.text}</p>
+            </div>
+            
+            )} 
             
         </div>
     </div>
